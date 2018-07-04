@@ -5,6 +5,8 @@ local io = io
 local math = math
 local os = os
 
+local wallpaper = {}
+
 function wallpaper.scanDir(directory)
 	local i, fileList, popen = 0, {}, io.popen
 	for filename in popen([[find "]] ..directory.. [[" -type f -iregex '.*\.\w*' ]]):lines() do
@@ -14,7 +16,7 @@ function wallpaper.scanDir(directory)
 	return fileList
 end
 
-wallpaperList = scanDir("/home/grey/Images/FromPhone-Pictures/backgrounds/")
+wallpaperList = wallpaper.scanDir("/home/grey/Images/FromPhone-Pictures/backgrounds/")
 
 math.randomseed(os.time())
 
@@ -24,13 +26,15 @@ end
 
 -- Apply a random wallpaper every changeTime seconds.
 changeTime = 600
-wallpaperTimer = gears.timer { timeout = changeTime }
-wallpaperTimer:connect_signal("timeout", function()
-	setPaper(s)
+wallpaper.timer = gears.timer { timeout = changeTime }
+wallpaper.timer:connect_signal("timeout", function()
+	wallpaper.setPaper(s)
 	-- stop the timer (we don't need multiple instances running at the same time)
-	wallpaperTimer:stop() 
+	wallpaper.timer:stop() 
 	--restart the timer
-	wallpaperTimer.timeout = changeTime
-	wallpaperTimer:start()
+	wallpaper.timer.timeout = changeTime
+	wallpaper.timer:start()
 end)
 
+
+return wallpaper
